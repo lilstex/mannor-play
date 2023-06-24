@@ -1,0 +1,24 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Register Account{% endblock %}
+{% block content %}
+  <div class="form-wrapper">
+    <form method="post" class="form">
+      {{ form.csrf_token }}
+      <h3 class="form-heading">Account Registration</h3>
+      <div class="form-group">
+        <label for="email">Email</label>
+        {{ form.email(class_ = 'form-control', placeholder='example@email.com', autofocus = true) }}
+      </div>
+      <div class="form-group">
+          <label for="password">Password</label>
+          {{ form.password(class_ = 'form-control', placeholder='***************', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        {{ form.confirm_password(class_ = 'form-control', placeholder='***************', autofocus = true) }}
+    </div>
+   
+      <input type="submit" value="Register" class="btn btn-primary btn-lg btn-block">
+    </form>
+  </div>
+{% endblock %}

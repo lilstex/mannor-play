@@ -1,0 +1,23 @@
+{% extends 'layouts/main.html' %}
+{% block title %}User Account{% endblock %}
+{% block content %}
+  <div class="form-wrapper">
+    <form method="post" class="form">
+      {{ form.csrf_token }}
+      <h3 class="form-heading">Login User</h3>
+      <div class="form-group">
+        <label for="email">Email</label>
+        {{ form.email(class_ = 'form-control', placeholder='example@email.com', autofocus = true) }}
+      </div>
+      <div class="form-group">
+          <label for="password">Password</label>
+          {{ form.password(class_ = 'form-control', placeholder='***************', autofocus = true) }}
+        </div>
+   
+      <input type="submit" value="Login" class="btn btn-primary btn-lg btn-block">
+      <div class="form-group">
+        <p>No account? <a href="{{ url_for('register_user_form') }}">Register</a></p>
+      </div>
+    </form>
+  </div>
+{% endblock %}
