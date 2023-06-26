@@ -41,6 +41,37 @@ app.jinja_env.filters['datetime'] = format_datetime
 def index():
   return render_template('pages/home.html')
 
+# List of URLs that require authentication
+protected_urls = [
+  '/artists/create',
+  '/venues/create',
+  '/shows/create',
+  '/users/<int:user_id>/edit',
+  '/users/<user_id>/delete',
+  '/venues/<int:venue_id>/edit',
+  '/venues/<venue_id>/delete',
+  '/artists/<int:artist_id>/edit',
+  '/artists/<int:artist_id>/delete',
+
+]
+#  ----------------------------------------------------------------
+#  Check if user is authenticated
+#  ----------------------------------------------------------------
+def is_authenticated():
+    # Check if the 'user_id' key exists in the session
+    if 'user_id' in session:
+        # User is authenticated
+        return True
+    else:
+        # User is not authenticated
+        return False
+
+@app.before_request
+def check_authentication():
+    if request.path in protected_urls and not is_authenticated():
+        # If the requested URL is protected and the user is not authenticated,
+        # redirect them to a login page or show an error message
+        return redirect('/login')
 
 #  Users
 #  ----------------------------------------------------------------
@@ -105,7 +136,6 @@ def login_user_submission():
   
   email = form.email.data
   password = form.password.data
-  # hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
   user = User.query.filter_by(email=email).first()
 
@@ -114,6 +144,7 @@ def login_user_submission():
     session['loggedIn'] = True
     # Store the user's email in the session for future use
     session['user_email'] = email
+    session['user_id'] = user.id
 
     flash('Login successful!')
     return redirect(url_for('index'))
@@ -125,14 +156,6 @@ def login_user_submission():
 def logout():
   session.clear()
   return redirect(url_for('login_user_form'))
-
-#  Show User Detail
-#  ----------------------------------------------------------------
-@app.route('/users/<int:user_id>')
-def show_user(user_id):
-  user = User.query.get(user_id)
-  return render_template('pages/show_venue.html', user=user)
-
 
 #  Edit and Update User
 #  ----------------------------------------------------------------
@@ -238,8 +261,9 @@ def create_venue_submission():
       address=form.address.data, 
       phone=form.phone.data,
       image_link=form.image_link.data,
-      website=form.website_link.data, 
       facebook_link=form.facebook_link.data, 
+      twitter_link=form.twitter_link.data, 
+      instagram_link=form.instagram_link.data, 
       genres=genres,
       seeking_description = form.seeking_description.data, 
       seeking_talent=form.seeking_talent.data
@@ -363,8 +387,9 @@ def show_venue(venue_id):
     "state": venue.state,
     "phone": venue.phone,
     "address": venue.address,
-    "website": venue.website,
     "facebook_link": venue.facebook_link,
+    "twitter_link": venue.twitter_link,
+    "instagram_link": venue.instagram_link,
     "seeking_talent": venue.seeking_talent,
     "seeking_description": venue.seeking_description,
     "image_link": venue.image_link,
@@ -393,8 +418,9 @@ def edit_venue(venue_id):
     "state": venue.state,
     "address": venue.address,
     "phone": venue.phone,
-    "website_link": venue.website,
     "facebook_link": venue.facebook_link,
+    "twitter_link": venue.twitter_link,
+    "instagram_link": venue.instagram_link,
     "seeking_talent": venue.seeking_talent,
     "seeking_description": venue.seeking_description,
     "image_link": venue.image_link
@@ -424,7 +450,8 @@ def edit_venue_submission(venue_id):
     venue.genres = genres
     venue.image_link = form.image_link.data
     venue.facebook_link = form.facebook_link.data
-    venue.website = form.website_link.data
+    venue.twitter_link = form.twitter_link.data
+    venue.instagram_link = form.instagram_link.data
     venue.seeking_talent = form.seeking_talent.data
     venue.seeking_description = form.seeking_description.data
 
@@ -473,22 +500,16 @@ def delete_venue(venue_id):
   # clicking that button delete it from the db then redirect the user to the homepage
 
 #  Artists
-#  ----------------------------------------------------------------
-#  ----------------------------------------------------------------
 
 #  Create Artist
 #  ----------------------------------------------------------------
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
   form = ArtistForm()
-  form.populate_state_choices()
   return render_template('forms/new_artist.html', form=form)
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
   form = ArtistForm()
    # Checking if the form passes validation
   if not form.validate():
@@ -504,13 +525,15 @@ def create_artist_submission():
     # Creating a new artist by inserting the artist data into the db
     new_artist = Artist(
       name = form.name.data,
+      user_id = session['user_id'],
       city = form.city.data,
       state = form.state.data,
       phone = form.phone.data,
       genres = genres,
       image_link = form.image_link.data,
       facebook_link = form.facebook_link.data,
-      website = form.website_link.data,
+      twitter_link = form.twitter_link.data,
+      instagram_link = form.instagram_link.data,
       seeking_venue = form.seeking_venue.data,
       seeking_description = form.seeking_description.data 
       )
@@ -535,7 +558,6 @@ def create_artist_submission():
 
 @app.route('/artists')
 def artists():
-  # TODO: replace with real data returned from querying the database
   artists = Artist.query.all()
   return render_template('pages/artists.html', artists=artists)
   
@@ -569,8 +591,6 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-  # shows the artist page with the given artist_id
-  # TODO: replace with real artist data from the artist table, using artist_id
   artist = Artist.query.get(artist_id)
   shows = db.session.query(Show).join(Venue).filter(Show.artist_id==artist_id).all()
   if not artist:
@@ -601,11 +621,10 @@ def show_artist(artist_id):
     "id": artist.id,
     "name": artist.name,
     "genres": re.sub(',', '', artist.genres), # Replacing the comma with a space
-    "city": artist.city,
-    "state": artist.state,
     "phone": artist.phone,
-    "website": artist.website,
     "facebook_link": artist.facebook_link,
+    "twitter_link": artist.twitter_link,
+    "instagram_link": artist.instagram_link,
     "seeking_venue": artist.seeking_venue,
     "seeking_description": artist.seeking_description,
     "image_link": artist.image_link,
@@ -620,7 +639,6 @@ def show_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  # TODO: populate form with fields from artist with ID <artist_id>
   artist = Artist.query.get(artist_id)
   if not artist:
         return redirect(url_for('artists'))
@@ -630,11 +648,10 @@ def edit_artist(artist_id):
     "id": artist.id,
     "name": artist.name,
     "genres": artist.genres,
-    "city": artist.city,
-    "state": artist.state,
     "phone": artist.phone,
-    "website_link": artist.website,
     "facebook_link": artist.facebook_link,
+    "twitter_link": artist.twitter_link,
+    "instagram_link": artist.instagram_link,
     "seeking_venue": artist.seeking_venue,
     "seeking_description": artist.seeking_description,
     "image_link": artist.image_link
@@ -643,8 +660,6 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
-  # artist record with ID <artist_id> using the new attributes
   form = ArtistForm()
   if not form.validate():
     flash(form.errors)
@@ -687,8 +702,6 @@ def edit_artist_submission(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<artist_id>/delete', methods=['GET', 'POST'])
 def delete_artist(artist_id):
-  # TODO: Complete this endpoint for taking a artist_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
   error = False
   try:
     artist = Artist.query.get(artist_id)
@@ -718,8 +731,6 @@ def delete_artist(artist_id):
 
 @app.route('/shows')
 def shows():
-  # displays list of shows at /shows
-  # TODO: replace with real venues data.
   data = []
   shows = Show.query.order_by('id').all()
   for show in shows:
@@ -742,8 +753,6 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-  # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
   form = ShowForm()
    # Checking if the form passes validation
   if not form.validate():
