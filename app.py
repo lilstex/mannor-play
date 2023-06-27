@@ -246,16 +246,13 @@ def create_venue_submission():
   if not form.validate():
     flash(form.errors)
     return redirect(url_for('create_venue_submission'))
-  
-  # Formatting user input before adding to the db
-  get_genres = form.genres.data
-  genres = ", ".join(get_genres)
 
   try:
     error = False
     # Creating a new venue by inserting the venue data into the db
     new_venue = Venue(
       name=form.name.data, 
+      user_id = session['user_id'],
       city=form.city.data, 
       state=form.state.data, 
       address=form.address.data, 
@@ -264,7 +261,6 @@ def create_venue_submission():
       facebook_link=form.facebook_link.data, 
       twitter_link=form.twitter_link.data, 
       instagram_link=form.instagram_link.data, 
-      genres=genres,
       seeking_description = form.seeking_description.data, 
       seeking_talent=form.seeking_talent.data
       )
@@ -382,7 +378,6 @@ def show_venue(venue_id):
   data = {
     "id": venue.id,
     "name": venue.name,
-    "genres": re.sub(',', '', venue.genres), # Removing the comma and replacing it with a space
     "city": venue.city,
     "state": venue.state,
     "phone": venue.phone,
@@ -413,7 +408,6 @@ def edit_venue(venue_id):
   venue={
     "id": venue.id,
     "name": venue.name,
-    "genres": venue.genres,
     "city": venue.city,
     "state": venue.state,
     "address": venue.address,
@@ -434,20 +428,16 @@ def edit_venue_submission(venue_id):
     flash(form.errors)
     return redirect(url_for('edit_venue_submission', venue_id=venue_id))
 
-  # Formatting user input before adding to the db
-  get_genres = form.genres.data
-  genres = ", ".join(get_genres)
-
   try:
     error = False
     venue = Venue.query.get(venue_id)
 
     venue.name = form.name.data
+    venue.user_id = session['user_id']
     venue.city = form.city.data
     venue.state = form.state.data
     venue.phone = form.phone.data
     venue.address = form.address.data
-    venue.genres = genres
     venue.image_link = form.image_link.data
     venue.facebook_link = form.facebook_link.data
     venue.twitter_link = form.twitter_link.data
@@ -526,8 +516,6 @@ def create_artist_submission():
     new_artist = Artist(
       name = form.name.data,
       user_id = session['user_id'],
-      city = form.city.data,
-      state = form.state.data,
       phone = form.phone.data,
       genres = genres,
       image_link = form.image_link.data,
@@ -544,14 +532,11 @@ def create_artist_submission():
     error = True
     db.session.rollback()
   finally:
-    # Close the session
     db.session.close()
   if not error:
-    # on successful db insert, flash success
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
     return render_template('pages/home.html')
   else:
-    # TODO: on unsuccessful db insert, flash an error instead.
     flash('An error occurred. Artist ' + form.name.data + ' could not be listed.')
     abort(500)
 
@@ -674,13 +659,13 @@ def edit_artist_submission(artist_id):
     artist = Artist.query.get(artist_id)
 
     artist.name = form.name.data
-    artist.city = form.city.data
-    artist.state = form.state.data
+    artist.user_id = session['user_id']
     artist.phone = form.phone.data
     artist.genres = genres
     artist.image_link = form.image_link.data
     artist.facebook_link = form.facebook_link.data
-    artist.website = form.website_link.data
+    artist.twitter_link = form.twitter_link.data
+    artist.instagram_link = form.instagram_link.data
     artist.seeking_venue = form.seeking_venue.data
     artist.seeking_description = form.seeking_description.data
 

@@ -63,7 +63,6 @@ class Venue(db.Model):
   twitter_link = db.Column(db.String(120))
   instagram_link = db.Column(db.String(120))
   address = db.Column(db.String(120), nullable=False)
-  genres = db.Column(db.String(120), nullable=False)
   image_link = db.Column(db.String(500))
   seeking_talent = db.Column(db.Boolean, default=False)
   seeking_description = db.Column(db.String)

@@ -9,11 +9,11 @@
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
-		<div class="genres">
+		<!-- <div class="genres">
 			{% for genre in venue.genres %}
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
-		</div>
+		</div> -->
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}, Nigeria
 		</p>
@@ -27,10 +27,10 @@
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
 		</p>
 		<p>
-			<i class="fa-brands fa-twitter"></i> {% if venue.twitter_link %}<a href="{{ venue.twitter_link }}" target="_blank">{{ venue.twitter_link }}</a>{% else %}No Twitter Link{% endif %}
+			<i class="fab fa-twitter"></i> {% if venue.twitter_link %}<a href="{{ venue.twitter_link }}" target="_blank">{{ venue.twitter_link }}</a>{% else %}No Twitter Link{% endif %}
         </p>
 		<p>
-			<i class="fa-brands fa-instagram"></i> {% if venue.instagram_link %}<a href="{{ venue.instagram_link }}" target="_blank">{{ venue.instagram_link }}</a>{% else %}No Instagram Link{% endif %}
+			<i class="fab fa-instagram"></i> {% if venue.instagram_link %}<a href="{{ venue.instagram_link }}" target="_blank">{{ venue.instagram_link }}</a>{% else %}No Instagram Link{% endif %}
         </p>
 		{% if venue.seeking_talent %}
 		<div class="seeking">

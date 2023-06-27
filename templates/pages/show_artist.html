@@ -21,10 +21,10 @@
 			<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}" target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
         </p>
 		<p>
-			<i class="fa-brands fa-twitter"></i> {% if artist.twitter_link %}<a href="{{ artist.twitter_link }}" target="_blank">{{ artist.twitter_link }}</a>{% else %}No Twitter Link{% endif %}
+			<i class="fab fa-twitter"></i> {% if artist.twitter_link %}<a href="{{ artist.twitter_link }}" target="_blank">{{ artist.twitter_link }}</a>{% else %}No Twitter Link{% endif %}
         </p>
 		<p>
-			<i class="fa-brands fa-instagram"></i> {% if artist.instagram_link %}<a href="{{ artist.instagram_link }}" target="_blank">{{ artist.instagram_link }}</a>{% else %}No Instagram Link{% endif %}
+			<i class="fab fa-instagram"></i> {% if artist.instagram_link %}<a href="{{ artist.instagram_link }}" target="_blank">{{ artist.instagram_link }}</a>{% else %}No Instagram Link{% endif %}
         </p>
 		{% if artist.seeking_venue %}
 		<div class="seeking">
@@ -74,7 +74,7 @@
 
 {% if session['loggedIn'] %} 
 <a href="/artists/{{ artist.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
-<a href="/artists/{{ artist.id }}/delete"><button class="btn btn-primary btn-lg">Delete</button></a>
+<a href="/artists/{{ artist.id }}/delete"><button class="btn btn-danger btn-lg">Delete</button></a>
 {% endif %}
 
 {% endblock %}

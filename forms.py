@@ -42,7 +42,7 @@ class VenueForm(FlaskForm):
     state = SelectField(
         'state', 
         validators=[DataRequired()],
-        state_choices = [
+        choices = [
             ('AB', 'Abia'),
             ('AD', 'Adamawa'),
             ('AK', 'Akwa Ibom'),
@@ -96,32 +96,7 @@ class VenueForm(FlaskForm):
         'image_link',
         validators=[Optional(), URL()]
     )
-    genres = SelectMultipleField(
-        # TODO implement enum restriction
-        'genres', 
-        validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
-    )
+    
     facebook_link = StringField(
         'facebook_link', 
         validators=[Optional(), URL()]
