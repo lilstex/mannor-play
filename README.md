@@ -57,13 +57,13 @@ To run this project locally, follow these steps:
 
 3. Initialize and activate a virtual environment
 
-  For Linux/Mac:
+For Linux/Mac:
 
    ```bash
     python -m virtualenv env
     source env/bin/activate
   
-  For Windows:
+For Windows:
 
     ```bash
     python -m virtualenv env
