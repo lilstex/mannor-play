@@ -55,7 +55,7 @@ To run this project locally, follow these steps:
    ```bash
    cd mannor-play
 
-3. Initialize and activate a virtual environment
+3. Initialize and activate a virtual environment:
 
 For Linux/Mac:
 
