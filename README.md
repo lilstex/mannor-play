@@ -82,10 +82,8 @@ To run this project locally, follow these steps:
 
     ```bash
     export FLASK_APP=myapp
-    export FLASK_ENV=development # enables debug mode
+    export FLASK_ENV=development
     python3 app.py
-
-
 
 ## Usage
 
